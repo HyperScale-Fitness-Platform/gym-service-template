@@ -8,14 +8,39 @@ To maintain consistency across our microservices architecture and ensure seamles
 
 ```text
 gym-<name>-service/
-├── src/                    # Core application source code
-├── tests/                  # Unit, integration, and functional tests
-├── Dockerfile              # Multi-stage build configuration for local and production images
-├── k8s/                    # Local and environment-specific Kubernetes manifests
+├── src/
+│   ├── index.js                    # entrypoint: bootstraps express, DB, Kafka, routes
+│   ├── config/                     # env config, DB connection, Kafka connection
+│   │   ├── database.js
+│   │   └── kafka.js
+│   ├── models/                     # data layer — one file per sub-domain entity
+│   │   └── example.model.js
+│   ├── views/                      # only if you're server-rendering anything (likely empty/unused for a pure API — most teams skip this folder entirely for APIs, see note below)
+│   ├── controllers/                # request handling — calls services, shapes responses
+│   │   └── example.controller.js
+│   ├── services/                   # business logic — the actual "how", called by controllers
+│   │   └── example.service.js
+│   ├── routes/                     # maps URLs to controllers
+│   │   ├── example.routes.js
+│   │   └── index.js                # combines all routers, mounted in index.js
+│   ├── events/
+│   │   ├── producers/              # one file per event this service publishes
+│   │   │   └── sessionBooked.producer.js
+│   │   └── consumers/              # one file per event this service subscribes to
+│   │       └── paymentSucceeded.consumer.js
+│   ├── middleware/                 # auth check, error handler, request validation
+│   │   ├── auth.middleware.js
+│   │   └── errorHandler.middleware.js
+│   └── db/
+│       └── migrations/             # schema migrations — this service's OWN tables only
+├── tests/
+│   ├── unit/
+│   └── integration/
+├── k8s/
 │   ├── deployment.yaml     # Pod configurations, replica limits, and container specs
 │   ├── service.yaml        # Service definition mapping internal container ports
 │   └── configmap.yaml      # Non-sensitive runtime environment variables for THIS service
-├── .github/workflows/      # Automated CI/CD execution pipeline files
-│   └── ci.yml              # CI pipeline script handling formatting, linting, testing, and container image builds
-├── README.md               # Local service setup documentation, route details, and prerequisites
-└── package.json            # Node.js project manifest, dependency configuration, and lifecycle scripts
+├── .github/workflows/ci.yml
+├── Dockerfile
+├── .env.example
+└── README.md
