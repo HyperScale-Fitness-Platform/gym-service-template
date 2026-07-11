@@ -40,7 +40,7 @@ gym-<name>-service/
 │   ├── deployment.yaml     # Pod configurations, replica limits, and container specs
 │   ├── service.yaml        # Service definition mapping internal container ports
 │   └── configmap.yaml      # Non-sensitive runtime environment variables for THIS service
-├── .github/workflows/ci.yml
+├── Jenkinsfile.ci
 ├── Dockerfile
 ├── .env.example
 └── README.md
